@@ -1,0 +1,9 @@
+{
+  "node_name": "{{ ansible_hostname }}",
+  "discover": "{{ serf_discover }}",
+  "enable_syslog": true,
+  "log_level": "{{ serf_log_level }}",
+  "event_handlers": [
+    "{{ serf_conf_dir }}/handler.sh"
+  ]
+}

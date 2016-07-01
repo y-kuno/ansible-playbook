@@ -1,0 +1,10 @@
+---
+kibana_user: "kibana"
+kibana_home: "/opt/kibana"
+kibana_conf_dir: "/opt/kibana/config"
+
+# kibana.yml
+kibana_server_port: 5601
+kibana_server_host: "0.0.0.0"
+kibana_elasticsearch_url: "http://localhost:9200"
+kibana_elasticsearch_request_timeout: 30000

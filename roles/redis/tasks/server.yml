@@ -1,0 +1,23 @@
+---
+- name: update redis init script
+  template: src=init.d/redis.j2 dest=/etc/init.d/redis owner=root group=root mode=0755
+
+- name: update user shell
+  user: name={{ redis_user }} shell=/bin/bash state=present
+  when: redis_sentinel_use
+
+- name: make a .ssh/authorized_keys under the redis user home to operate this machine from redis sentinel
+  authorized_key: user={{ redis_user }} key="{{ lookup('file', item) }}" manage_dir=yes
+  with_fileglob: "{{ redis_sentinel_public_key }}"
+  when: redis_sentinel_use
+
+- name: add sudoers.d/redis
+  template: src=sudoers.d/redis.j2 dest=/etc/sudoers.d/redis owner=root group=root mode=0440
+  when: redis_sentinel_use
+
+- name: update redis.conf
+  template: src=redis.conf.j2 dest=/etc/redis.conf owner=root group=root mode=0644
+  notify: restart redis
+
+- name: start on boot redis
+  service: name=redis enabled=yes

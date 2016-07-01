@@ -1,0 +1,38 @@
+---
+nginx_user: "nginx"
+nginx_group: "nginx"
+nginx_repo_url: "http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm"
+nginx_conf_dir: "/etc/nginx/conf.d"
+nginx_log_dir: "/var/log/nginx"
+
+# nginx.conf
+nginx_worker_cpu_affinities:
+  - { processor: 1, affinity: "1" }
+  - { processor: 2, affinity: "10 01" }
+  - { processor: 4, affinity: "1000 0100 0010 0001" }
+  - { processor: 8, affinity: "10000000 01000000 00100000 00010000 00001000 00000100 00000010 00000001" }
+  - { processor: 12, affinity: "100000000000 010000000000 001000000000 000100000000 000010000000 000001000000 000000100000 000000010000 000000001000 000000000100 000000000010 000000000001" }
+  - { processor: 24, affinity: "100000000000000000000000 010000000000000000000000 001000000000000000000000 000100000000000000000000 000010000000000000000000 000001000000000000000000 000000100000000000000000 000000010000000000000000 000000001000000000000000 000000000100000000000000 000000000010000000000000 000000000001000000000000 000000000000100000000000 000000000000010000000000 000000000000001000000000 000000000000000100000000 000000000000000010000000 000000000000000001000000 000000000000000000100000 000000000000000000010000 000000000000000000001000 000000000000000000000100 000000000000000000000010 000000000000000000000001" }
+nginx_worker_rlimit_nofile: 65535
+nginx_worker_connections: 8192
+nginx_err_log: "{{ nginx_log_dir }}/error.log"
+nginx_err_log_level: "info"
+nginx_pidfile: "/var/run/nginx.pid"
+nginx_epoll: true
+nginx_xff_use: true
+nginx_xff_ip_from: "10.0.0.0/8"
+nginx_xff_header: "X-Forwarded-For"
+nginx_access_log: "{{ nginx_log_dir }}/access.log"
+nginx_sendfile: "on"
+nginx_tcp_nopush: "on"
+nginx_tcp_nodelay: "off"
+nginx_server_tokens: "off"
+nginx_keepalive_timeout: 3
+nginx_keepalive_requests: 100
+nginx_proxy_pass: "http://backend"
+nginx_proxy_http_version: 1.1
+nginx_proxy_set_headers:
+  - { key: "Connection", value: "\"\"" }
+nginx_favicon_use: ture
+nginx_upstream_backend_server: "127.0.0.1:9000"
+nginx_upstream_backend_keepalive: 1024

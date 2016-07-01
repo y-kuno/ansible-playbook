@@ -1,0 +1,13 @@
+---
+td_agent_user: "td-agent"
+td_agent_group: "td-agent"
+td_agent_plugins:
+  - plugin: "datacounter"
+  - plugin: "numeric-monitor"
+td_agent_conf_dir: "/etc/td-agent/conf.d"
+td_agent_configs:
+  - "monitor.conf"
+
+# monitor-agent.conf
+td_agent_mackerel_monitor_bind: "0.0.0.0"
+td_agent_mackerel_monitor_port: 24220

@@ -1,0 +1,21 @@
+---
+- name: add json config file
+  template: src=conf.d/{{ item }}.json.j2 dest=/etc/sensu/conf.d/{{ item }}.json
+            owner={ sensu_user }} group={{ sensu_group }} mode=0644
+  with_items:
+    - checks
+    - handlers
+    - influxdb
+    - mailer
+    - slack
+  notify: restart sensu server
+
+- name: copy extension files
+  copy: src=sensu/extensions/ dest=/etc/sensu/extensions/ owner={ sensu_user }} group={{ sensu_group }} mode=0750
+  notify: restart sensu server
+
+- name: start on boot sensu
+  service: name=sensu-{{ item }} enabled=yes
+  with_items:
+    - server
+    - api

@@ -1,0 +1,22 @@
+---
+rabbitmq_user: "rabbitmq"
+rabbitmq_group: "rabbitmq"
+rabbitmq_server_url: "http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.0/rabbitmqls-server-3.6.0-1.noarch.rpm"
+rabbitmq_ssl_use: false
+rabbitmq_ssl_dir: "/etc/rabbitmq/ssl"
+rabbitmq_cacert: "rabbitmq_cacert.pem"
+rabbitmq_cert: "rabbitmq_cert.pem"
+rabbitmq_key: "rabbitmq_key.pem"
+#rabbitmq_plugins:
+rabbitmq_components:
+  - vhost: "/sensu"
+    user: "sensu"
+    password: "sensu"
+
+# rabbitmq.conf
+rabbitmq_tcp_listeners_address: "0.0.0.0"
+rabbitmq_tcp_listeners_port: 5672
+rabbitmq_ssl_listeners_address: "0.0.0.0"
+rabbitmq_ssl_listeners_port: 5671
+rabbitmq_ssl_allow_poodle_attack: ture
+rabbitmq_ssl_options_fail_if_no_peer_cert: true

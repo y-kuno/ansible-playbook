@@ -1,0 +1,15 @@
+---
+- name: add repository 'sensu'
+  copy: src=sensu.repo dest=/etc/yum.repos.d/sensu.repo owner=root group=root mode=0644
+  register: add_sensu_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_sensu_repo.changed
+
+- name: install uchiwa
+  yum: name=uchiwa state=present
+
+- name: add uchiwa.json
+  template: src=uchiwa.json.j2 dest=/etc/sensu/uchiwa.json {{ uchiwa_user }} group={{ uchiwa_group }} mode=0644
+  notify: restart uchiwa

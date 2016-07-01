@@ -1,0 +1,19 @@
+---
+mackerel_agent_conf_dir: "/etc/mackerel-agent/conf.d"
+
+mackerel_agent_apikey: ""
+mackerel_agent_pidfile: "/var/run/mackerel-agent.pid"
+mackerel_agent_root: "/var/lib/mackerel-agent"
+mackerel_agent_verbose: "false"
+#mackerel_agent_roles:
+#  - "prd:app"
+mackerel_agent_host_status_start: "standby"
+mackerel_agent_host_status_stop: "poweroff"
+#mackerel_agent_include: "/etc/mackerel-agent/conf.d/*.conf"
+mackerel_agent_plugins:
+  linux: "mackerel-plugin-linux"
+#mackerel_check_plugins:
+#  - key: "healthcheck"
+#    command: "check-http -u http://localhost/alive"
+#    interval: 60
+#    attempts: 3

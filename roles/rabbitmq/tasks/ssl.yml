@@ -1,0 +1,11 @@
+---
+- name: create ssl dir
+  file: path={{ rabbitmq_ssl_dir }} state=directory owner={{ rabbitmq_user }} group={{ rabbitmq_group }} mode=0750
+
+- name: add ssl pem file
+  copy: src={{ item }} dest={{ rabbitmq_ssl_dir }}/{{ item }}
+        owner={{ rabbitmq_user }} group={{ rabbitmq_group }} mode=0640
+  with_items:
+    - "{{ rabbitmq_cacert }}"
+    - "{{ rabbitmq_cert }}"
+    - "{{ rabbitmq_key }}"

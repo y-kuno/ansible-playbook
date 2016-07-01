@@ -1,0 +1,12 @@
+---
+- name: add repository 'nodesource'
+  yum: name=https://rpm.nodesource.com//pub_{{ nodejs_major_version }}.x/el/6/x86_64/nodesource-release-el6-1.noarch.rpm
+       state=present
+  register: add_nodesource_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_nodesource_repo.changed
+
+- name: install nodejs
+  yum: name=nodejs state=present

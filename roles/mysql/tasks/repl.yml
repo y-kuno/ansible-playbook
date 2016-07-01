@@ -1,0 +1,29 @@
+---
+- name: install MySQL-python
+  yum: name=MySQL-python state=installed
+
+- name: create replication user
+  mysql_user: name={{ mysql_repl_user }} password={{ mysql_repl_password }} host=% priv="*.*:REPLICATION SLAVE" state=present
+
+- name: get master binlog file name and binlog position
+  mysql_replication: mode=getmaster
+  delegate_to: "{{ mysql_repl_master_host }}"
+  register: mysql_master_status
+  when: mysql_repl_role == "slave"
+
+- name: check if slave is already configured for replication
+  mysql_replication: mode=getslave
+  ignore_errors: true
+  register: mysql_slave_status
+  when: mysql_repl_role == "slave"
+
+- name: change master to
+  mysql_replication: mode=changemaster master_host={{ mysql_repl_master_host }}
+                     master_log_file={{ mysql_master_status.File }} master_log_pos={{ mysql_master_status.Position }}
+                     master_user={{ mysql_repl_user }} master_password={{ mysql_repl_password }}
+  when: mysql_slave_status|failed and mysql_repl_role == "slave"
+  ignore_errors: yes
+
+- name: start slave
+  mysql_replication: mode=startslave
+  when: mysql_slave_status|failed and mysql_repl_role == "slave"

@@ -1,0 +1,15 @@
+[
+  {rabbit, [
+    {tcp_listeners, [{"{{ rabbitmq_tcp_listeners_address }}", {{ rabbitmq_tcp_listeners_port }}}]}{% if rabbitmq_ssl_use %},
+    {ssl_listeners, [{"{{ rabbitmq_ssl_listeners_address }}", {{ rabbitmq_ssl_listeners_port }}}]},
+    {ssl_allow_poodle_attack, {{ rabbitmq_ssl_allow_poodle_attack }}},
+    {ssl_options, [
+      {cacertfile, "{{ rabbitmq_ssl_dir }}/{{ rabbitmq_cacert }}"},
+      {certfile, "{{ rabbitmq_ssl_dir }}/{{ rabbitmq_cert }}"},
+      {keyfile, "{{ rabbitmq_ssl_dir }}/{{ rabbitmq_key }}"},
+      {verify, verify_peer},
+      {fail_if_no_peer_cert, {{ rabbitmq_ssl_options_fail_if_no_peer_cert }}}
+    ]}
+{% endif %}
+  ]}
+].

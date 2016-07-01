@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+# Redis Sentinel init script for RHEL-based distros
+#
+# chkconfig: - 58 74
+# description: Redis Sentinel monitor
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+SENTINEL_POST={{ redis_sentinel_port }}
+PIDFILE="{{ redis_sentinel_pidfile }}"
+CONFIG="/etc/redis-sentinel.conf"
+EXEC=/usr/local/bin/redis-sentinel
+CLIEXEC=/usr/local/bin/redis-cli
+LOCKFILE=/var/lock/subsys/redis-sentinel
+
+[ -e /etc/sysconfig/redis ] && . /etc/sysconfig/redis
+
+lockfile=/var/lock/subsys/redis-sentinel
+
+start() {
+    if [ -f $PIDFILE ]; then
+        echo "$PIDFILE exists, process is already running or crashed"
+    else
+        echo "Starting Redis Sentinel..."
+        ulimit -n {{ redis_ulimit }}
+        daemon --user ${REDIS_USER-redis} $EXEC $CONFIG --sentinel
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && touch $LOCKFILE
+        return $retval
+    fi
+}
+
+stop() {
+    if [ ! -f $PIDFILE ]; then
+        echo "$PIDFILE does not exist, process is not running"
+    else
+        PID=$(cat $PIDFILE)
+        echo "Stopping ..."
+        $CLIEXEC -p $SENTINEL_POST shutdown
+        while [ -x /proc/${PID} ]
+        do
+            echo "Waiting for Redis Sentinel to shutdown ..."
+            sleep 1
+        done
+        echo "Redis Sentinel stopped"
+    fi
+}
+
+restart() {
+    force_stop
+    start
+}
+
+restart() {
+    stop
+    start
+}
+
+force-reload() {
+    stop
+    start
+}
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart|force-reload)
+        $1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|force-reload}"
+        exit 2
+esac
+
+exit $?

@@ -1,0 +1,26 @@
+{
+  "rabbitmq": {
+    "ssl": {
+      "cert_chain_file": "{{ sensu_ssl_dir }}/{{ sensu_cert }}",
+      "private_key_file": "{{ sensu_ssl_dir }}/{{ sensu_key }}"
+    },
+    "host": "{{ sense_rabbitmq_host }}",
+    "port": {{ sense_rabbitmq_post }},
+    "vhost": "{{ sense_rabbitmq_vhost }}",
+    "user": "{{ sense_rabbitmq_user }}",
+    "password": "{{ sense_rabbitmq_password }}"
+  }
+{% if redis_role == "server" %}
+  ,
+  "redis": {
+    "host": "{{ sense_redis_host }}",
+    "port": {{ sense_redis_port }}
+  },
+  "api": {
+    "host": "{{ sensu_api_host }}",
+    "port": {{ sensu_api_port }},
+    "user": "{{ sense_rabbitmq_user }}",
+    "password": "{{ sense_rabbitmq_password }}"
+  }
+{% endif %}
+}

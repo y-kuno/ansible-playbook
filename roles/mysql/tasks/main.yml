@@ -1,0 +1,35 @@
+---
+- name: add repository 'mysql'
+  yum: name={{ mysql_repo_url }} state=installed
+  register: add_mysql_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_mysql_repo.changed
+
+- name: install mysql-community-server
+  yum: name=mysql-community-server state=installed
+  register: mysql_install
+
+- name: install mysql-utilities
+  yum: name={{ item }} state=installed
+  with_items:
+    - mysql-connector-python
+    - mysql-utilities
+
+- name: create log dir
+  file: path={{ mysql_log_dir }} state=directory owner={{ mysql_user }} group={{ mysql_group }} mode=0755
+
+- name: update config
+  template: src=my.cnf.j2 dest=/etc/my.cnf owner=root group=root mode=0644
+  notify: restart mysqld
+
+- name: initialize data dir, no root password is generated
+  command: mysqld --initialize-insecure --user=mysql
+  when: mysql_install.changed
+
+- name: start mysqld
+  service: name=mysqld state=started
+
+- include: repl.yml
+  when: mysql_repl_use

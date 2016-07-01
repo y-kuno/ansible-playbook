@@ -1,0 +1,12 @@
+---
+- name: add repositry 'percona'
+  yum: name={{ percona_repo_url }} state=present
+  register: add_percona_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_percona_repo.changed
+
+- name: install percona packages
+  yum: name={{ item }} state=present
+  with_items: "{{ percona_packages }}"

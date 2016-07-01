@@ -1,0 +1,23 @@
+---
+- name: create jdk install dir
+  file: path={{ jdk_install_dir }} state=directory owner=root group=root mode=0755
+
+- name: download jdk
+  get_url: url="{{ jdk_download_url }}/{{ jdk_version.major }}u{{ jdk_version.minor }}-b{{ jdk_version.build }}/jdk-{{ jdk_version.major }}u{{ jdk_version.minor }}-linux-x64.tar.gz"
+           headers="{{ jdk_download_header }}" dest={{ jdk_install_dir }}/jdk-{{ jdk_version.major }}u{{ jdk_version.minor }}-linux-x64.tar.gz
+
+- name: extraction jdk
+  unarchive: src={{ jdk_install_dir }}/jdk-{{ jdk_version.major }}u{{ jdk_version.minor }}-linux-x64.tar.gz dest={{ jdk_install_dir }} copy=no
+
+- name: create symbolic link jdk home
+  file: path={{ jdk_home }} src={{ jdk_install_dir }}/jdk1.{{ jdk_version.major }}.0_{{ jdk_version.minor }}
+        state=link owner=root group=root
+
+- name: create symbolic link java javac...
+  file: path=/usr/bin/{{ item }} src={{ jdk_home }}/bin/{{ item }} state=link owner=root group=root
+  with_items:
+    - java
+    - javac
+    - jinfo
+    - jps
+    - jstat

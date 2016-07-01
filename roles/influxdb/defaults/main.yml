@@ -1,0 +1,4 @@
+---
+influxdb_user: "influxdb"
+influxdb_group: "influxdb"
+influxdb_version: "0.12.2-1"

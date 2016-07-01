@@ -1,0 +1,25 @@
+---
+- name: import elasticsearch GPG key
+  rpm_key: key=https://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: add repository 'curator'
+  copy: src=curator.repo dest=/etc/yum.repos.d/curator.repo owner=root group=root mode=0644
+  register: add_curator_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_curator_repo.changed
+
+- name: install dependencies packages
+  yum: name={{ item }} state=present
+  with_items:
+    - python-setuptools
+    - python-unittest2
+
+- name: install python-elasticsearch-curator
+  yum: name=python-elasticsearch-curator state=present
+
+- name: add cron 'curator close job'
+  cron: name="curator close job"
+        job="/usr/bin/curator --host {{ curator_host }} close indices --older-than {{ curator_close_older_than }} --time-unit {{ curator_close_time_unit }} --timestring {{ curator_close_timestring }}"
+        minute={{ curator_close_cron_minute }} hour={{ curator_close_cron_hour }} user=cy_daemon state=present

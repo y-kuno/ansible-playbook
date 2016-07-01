@@ -1,0 +1,39 @@
+---
+- name: install dependencies packages
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - make
+
+- name: add redis user
+  user: name={{ redis_user }} comment="Redis" home={{ redis_home }} shell=/bin/false system=yes state=present
+
+- name: download redis
+  command: wget -P {{ redis_download_dir }} "http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz"
+           creates={{ redis_download_dir }}/redis-{{ redis_version }}.tar.gz
+  register: download_redis
+
+- name: extraction redis
+  unarchive: src={{ redis_download_dir }}/redis-{{ redis_version }}.tar.gz
+             dest={{ redis_download_dir }} copy=no
+  when: download_redis.changed
+
+- name: compile redis
+  command: make chdir={{ redis_download_dir }}/redis-{{ redis_version }}
+  when: download_redis.changed
+
+- name: install redis
+  command: make install chdir={{ redis_download_dir }}/redis-{{ redis_version }}
+  when: download_redis.changed
+
+- name: create /var/run/redis dir
+  file: path=/var/run/redis state=directory owner={{ redis_user }} mode=0755
+
+- name: add sysconfig/redis
+  template: src=sysconfig/redis.j2 dest=/etc/sysconfig/redis owner=root group=root mode=0644
+
+- include: server.yml
+  when: redis_role == "server"
+
+- include: sentinel.yml
+  when: redis_role == "sentinel"

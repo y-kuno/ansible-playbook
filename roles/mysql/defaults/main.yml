@@ -1,0 +1,102 @@
+---
+mysql_user: "mysql"
+mysql_group: "mysql"
+mysql_repo_url: "http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm"
+mysql_log_dir: "/var/log/mysql"
+mysql_repl_use: false
+mysql_repl_user: repl
+mysql_repl_password: repl
+mysql_repl_role: "master" # master or slave
+mysql_repl_master_host: "127.0.0.1"
+
+# my.cnf
+## General
+mysql_port: 3306
+mysql_socket: "/var/lib/mysql/mysql.sock"
+mysql_bind_address: "0.0.0.0"
+mysql_pidfile: "/var/run/mysqld/mysqld.pid"
+mysql_data_dir: "/var/lib/mysql"
+mysql_default_storage_engine: "InnoDB"
+mysql_default_password_lifetime: 0
+mysql_thread_stack: "256K"
+mysql_tmp_table_size: "64M"
+mysql_max_heap_table_size: "64M"
+mysql_performance_schema: "ON"
+mysql_symbolic_links: 0
+## Character
+mysql_character_set_server: "utf8"
+mysql_collation_server: "utf8_general_ci"
+## Session
+mysql_back_log: 50
+mysql_skip_name_resolve: "ON"
+mysql_max_connections: 1000
+mysql_max_connect_errors: 100
+mysql_max_allowed_packet: "4M"
+## Memory
+mysql_join_buffer_size: "256K"
+mysql_sort_buffer_size: "2M"
+mysql_table_open_cache: 4096
+mysql_thread_cache_size: 300
+mysql_query_cache_size: 0
+mysql_query_cache_type: 0
+mysql_query_cache_limit: "1M"
+
+## Log
+mysql_expire_logs_days: 7
+mysql_log_error: "{{ mysql_log_dir }}/mysqld.log"
+mysql_log_output: "FILE"
+mysql_log_syslog: "OFF"
+mysql_log_timestamps: "SYSTEM"
+## General Query Log
+mysql_general_log: 0
+mysql_general_log_file: "{{ mysql_log_dir }}/mysql-general.log"
+## Binary Log
+mysql_binlog_format: "MIXED"
+mysql_binlog_cache_size: "1M"
+mysql_log_bin: "mysql-bin"
+mysql_sync_binlog: 1
+## Slow Query Log
+mysql_slow_query_log: 1
+mysql_slow_query_log_file: "{{ mysql_log_dir }}/mysql-slow.log"
+mysql_long_query_time: 1
+
+## Replication
+mysql_server_id: "{{ ansible_eth0.ipv4.address | replace('.', '') }}"
+mysql_relay_log: mysql-relay-bin
+mysql_slave_net_timeout: 30
+mysql_log_slave_updates: "OFF"
+mysql_read_only: "OFF"
+
+## InnoDB
+mysql_innodb_buffer_pool_dump_pct: 25
+mysql_innodb_buffer_pool_size: "{{ (ansible_memtotal_mb * 0.7) | round | int }}M"
+mysql_innodb_commit_concurrency: 0
+mysql_innodb_data_file_path: "ibdata1:300M:autoextend"
+mysql_innodb_doublewrite: "ON"
+mysql_innodb_file_per_table: "ON"
+mysql_innodb_lock_wait_timeout: 50
+mysql_innodb_io_capacity: 2000
+# Thread
+mysql_innodb_read_io_threads: "{{ ansible_processor_count }}"
+mysql_innodb_write_io_threads: "{{ ansible_processor_count }}"
+mysql_innodb_thread_concurrency: "{{ ansible_processor_count * 2 }}"
+# Log
+mysql_innodb_flush_log_at_timeout: 1
+mysql_innodb_flush_log_at_trx_commit: 1
+mysql_innodb_flush_method: "O_DIRECT"
+mysql_innodb_max_dirty_pages_pct: 75
+mysql_innodb_log_buffer_size: "16M"
+mysql_innodb_log_file_size: "256M"
+mysql_innodb_log_files_in_group: 3
+
+## MyISAM
+mysql_bulk_insert_buffer_size: "8M"
+mysql_key_buffer_size: "{{ (ansible_memtotal_mb * 0.3) | round | int }}M"
+mysql_read_buffer_size: "128K"
+mysql_read_rnd_buffer_size: "256K"
+mysql_myisam_repair_threads: 1
+mysql_myisam_sort_buffer_size: "8M"
+mysql_myisam_max_sort_file_size: "10G"
+
+## mysqldump
+mysql_dump_max_allowed_packet: "128M"

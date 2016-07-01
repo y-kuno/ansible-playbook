@@ -1,0 +1,23 @@
+---
+- name: update user shell
+  user: name={{ redis_user }} shell=/bin/bash state=present
+
+- name: create .ssh dir
+  file: path={{ redis_home }}/.ssh state=directory owner={{ redis_user }} group={{ redis_user }} mode=0700
+
+- name: add privete key
+  copy: src={{ redis_sentinel_private_key }} dest={{ redis_home }}/.ssh/id_rsa
+        owner={{ redis_user }} group={{ redis_user }} mode=0600
+
+- name: create dir '/etc/redis'
+  file: path=/etc/redis state=directory owner=root group=root mode=0755
+
+- name: update redis-sentinel init script
+  template: src=init.d/redis-sentinel.j2 dest=/etc/init.d/redis-sentinel owner=root group=root mode=0755
+
+- name: update redis-sentinel.conf
+  template: src=redis-sentinel.conf.j2 dest=/etc/redis-sentinel.conf owner={{ redis_user }} group=root mode=0644
+
+- name: add failover script
+  template: src=redis/sentinel_failover.sh.j2 dest={{ redis_sentinel_client_reconfig_script }}
+            owner=root group=root mode=0755

@@ -1,0 +1,49 @@
+---
+sensu_user: "sensu"
+sensu_group: "sensu"
+sensu_role: "server" # server or client
+sensu_ssl_dir: "/etc/sensu/ssl"
+sensu_cert: "sensu_cert.pem"
+sensu_key: "sensu_key.pem"
+sensu_embedded_ruby: true
+sensu_gems:
+  - "sensu-cli"
+sensu_plugins:
+  - "sensu-plugins-slack"
+
+# config.json
+sense_rabbitmq_host: "127.0.0.1"
+sense_rabbitmq_post: 5671
+sense_rabbitmq_vhost: "/sensu"
+sense_rabbitmq_user: "sensu"
+sense_rabbitmq_password: "sensu"
+sense_redis_host: "127.0.0.1"
+sense_redis_port: 6379
+sensu_api_host: "127.0.0.1"
+sensu_api_port: 4567
+
+# client.json
+sensu_client_subscriptions:
+  - all
+sensu_client_handlers:
+  - slack
+  - alert-mail
+
+# influxdb.config
+sensu_influxdb_hostname: "127.0.0.1"
+sensu_influxdb_port: 8086
+sensu_influxdb_username: "sensu"
+sensu_influxdb_password: "sensu"
+sensu_influxdb_database: "metrics"
+
+# mailer.json
+sensu_mailer_admin_gui: "http://127.0.0.1"
+sensu_mailer_mail_from: "sensu@sensu.amb-labo.incvb.io"
+sensu_mailer_mail_to: "ca-crit@ca-sys.net"
+sensu_mailer_reply_to: "ca-crit@ca-sys.net"
+sensu_mailer_smtp_address: "localhost"
+sensu_mailer_smtp_port: 25
+
+# slack.json
+sensu_slack_webhook_url: "https://hooks.slack.com/services/XXXX/XXXX/XXXX"
+sensu_slack_icon_url: "http://sensuapp.org/img/sensu_logo_large-c92d73db.png"

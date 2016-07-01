@@ -1,0 +1,13 @@
+---
+- name: import mackerel GPG key
+  apt_key: url=https://mackerel.io/assets/files/GPG-KEY-mackerel
+
+- name: add repository 'mackerel'
+  apt_repository: repo='deb http://apt.mackerel.io/debian/ mackerel contrib' state=present update_cache=yes
+
+- name: install mackerel packages
+  apt: name={{ item }} state=latest update_cache=yes force=yes dpkg_options='force-confdef,force-confold'
+  with_items:
+      - mackerel-agent
+      - mackerel-agent-plugins
+      - mackerel-check-plugins

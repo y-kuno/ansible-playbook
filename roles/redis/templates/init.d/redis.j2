@@ -1,0 +1,75 @@
+#!/bin/sh
+#
+# Simple Redis init.d script for RHEL-based distros
+#
+# chkconfig: - 58 74
+# description: Redis key-value store
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+REDIS_PORT={{ redis_port }}
+PIDFILE="{{ redis_pidfile }}"
+CONFIG="/etc/redis.conf"
+EXEC=/usr/local/bin/redis-server
+CLIEXEC=/usr/local/bin/redis-cli
+LOCKFILE=/var/lock/subsys/redis
+
+[ -e /etc/sysconfig/redis ] && . /etc/sysconfig/redis
+
+start() {
+    if [ -f $PIDFILE ]; then
+        echo "$PIDFILE exists, process is already running or crashed"
+    else
+        echo "Starting Redis Server..."
+        ulimit -n {{ redis_ulimit }}
+        daemon --user ${REDIS_USER-redis} $EXEC $CONFIG
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && touch $LOCKFILE
+        return $retval
+    fi
+}
+
+stop() {
+    if [ ! -f $PIDFILE ]; then
+        echo "$PIDFILE does not exist, process is not running"
+    else
+        PID=$(cat $PIDFILE)
+        echo "Stopping ..."
+        $CLIEXEC -p $REDIS_PORT shutdown
+        while [ -x /proc/${PID} ]
+        do
+            echo "Waiting for Redis Server to shutdown ..."
+            sleep 1
+        done
+        echo "Redis Server stopped"
+    fi
+}
+
+restart() {
+    stop
+    start
+}
+
+force-reload() {
+    stop
+    start
+}
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart|force-reload)
+        $1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|force-reload}"
+        exit 2
+esac
+
+exit $?

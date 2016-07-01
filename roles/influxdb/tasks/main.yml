@@ -1,0 +1,11 @@
+---
+- name: install influxdb
+  yum: name=https://dl.influxdata.com/influxdb/releases/influxdb-{{ influxdb_version }}.x86_64.rpm state=present
+
+- name: update influxdb config
+  template: src=influxdb.conf.j2 dest=/etc/influxdb/influxdb.conf
+            owner={{ influxdb_user }} group={{ influxdb_group }} mode=0644
+  notify: restart influxdb
+
+- name: start on boot influxdb
+  service: name=influxdb enabled=yes

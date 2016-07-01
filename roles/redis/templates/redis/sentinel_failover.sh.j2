@@ -1,0 +1,50 @@
+#!/bin/bash
+
+master_vip_device="eth0"
+
+SSH_OPT="-tt -o ConnectionAttempts=1 -o ConnectTimeout=2"
+LOGFILE="/tmp/sentinel_reconfigure.log"
+
+
+LOG() {
+echo "[`date`] $@" >> $LOGFILE
+}
+
+#<master-name> <role> <state> <from-ip> <from-port> <to-ip> <to-port>
+
+MASTER_NAME="$1"
+ROLE="$2"
+STATE="$3"
+FROM_IP="$4"
+FROM_PORT="$5"
+TO_IP="$6"
+TO_PORT="$7"
+
+
+LOG " sentinel failover script started"
+LOG " arg:$@"
+LOG " role:$ROLE  state:$STATE"
+
+if [ "$ROLE" = "leader" -a "$STATE" = "start" ] ; then
+
+  LOG " removing vip from old server $FROM_IP ..."
+  ssh $FROM_IP $SSH_OPT "sudo /sbin/ip addr del {{ redis_sentinel_vip }}/{{ redis_sentinel_vip_prefix }} dev $master_vip_device label $master_vip_device:0"
+  if [ $? -eq 0 ] ;then
+    LOG " done"
+  else
+    LOG " failed"
+  fi
+
+  sleep 5
+
+  LOG " assigning vip for new server $TO_IP ..."
+  ssh $TO_IP $SSH_OPT "sudo /sbin/ip addr add {{ redis_sentinel_vip }}/{{ redis_sentinel_vip_prefix }} dev $master_vip_device label $master_vip_device:0 && sudo /sbin/arping -A {{ redis_sentinel_vip }} -c 5"
+  if [ $? -eq 0 ] ;then
+    LOG " done"
+  else
+    LOG " failed"
+  fi
+
+fi
+
+LOG "sentinel failover script ended"

@@ -1,0 +1,59 @@
+---
+- name: import elasticsearch GPG key
+  rpm_key: key=https://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: add repository 'elasticsearch'
+  copy: src=elasticsearch.repo dest=/etc/yum.repos.d/elasticsearch.repo owner=root group=root mode=0644
+  register: add_elasticsearch_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_elasticsearch_repo.changed
+
+- name: install elasticsearch
+  yum: name=elasticsearch state=present
+
+- name: install monitor elasticsearch plugins
+  elasticsearch_plugin: name={{ item }} state=present
+  with_items:
+    - license
+    - marvel-agent
+
+- name: install elasticsearch plugins
+  elasticsearch_plugin: name={{ item }} state=present
+  with_items: "{{ elasticsearch_plugins }}"
+
+- name: create elasticsearch conf dir
+  file: path={{ elasticsearch_conf_dir }} state=directory owner=root group=root mode=0755
+
+- name: create elasticsearch template dir
+  file: path={{ elasticsearch_template_dir }} state=directory owner=root group=root mode=0755
+
+- name: create elasticsearch log dir
+  file: path={{ elasticsearch_log_dir }} state=directory
+        owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0755
+
+- name: update sysconfig/elasticsearch
+  template: src=sysconfig/elasticsearch.j2 dest=/etc/sysconfig/elasticsearch owner=root group=root mode=0644
+  notify: restart elasticsearch
+
+- name: update elasticsearch conf
+  template: src=elasticsearch/elasticsearch.yml.j2 dest={{ elasticsearch_conf_dir }}/elasticsearch.yml
+            owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0750
+  notify: restart elasticsearch
+
+- name: add elasticsearch template
+  template: src=elasticsearch/templates/{{ item }}.json.j2 dest={{ elasticsearch_template_dir }}/{{ item }}.json
+            owner=root group=root mode=0644
+  with_items: "{{ elasticsearch_templates }}"
+
+- name: start elasticsearch
+  service: name=elasticsearch state=started
+
+- name: add index templates
+  command: curl -X PUT "http://localhost:{{ elasticsearch_http_port }}/_template/{{ item }}" -d @{{ item }}.json
+           chdir={{ elasticsearch_template_dir }}
+  with_items: "{{ elasticsearch_templates }}"
+  when: "elasticsearch_templates is defined"
+  ignore_errors: true
+

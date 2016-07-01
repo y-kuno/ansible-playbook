@@ -1,0 +1,15 @@
+{
+  "client": {
+    "name": "{{ ansible_fqdn }}",
+    "address": "{{ ansible_default_ipv4.address }}",
+    "subscriptions": [ "{{ "\",\"".join(sensu_client_subscriptions) }}" ],
+    "keepalive": {
+      "thresholds": {
+        "warning": 90,
+        "critical": 180
+      },
+      "handlers": [ "{{ "\",\"".join(sensu_client_handlers) }}" ],
+      "refresh": 600
+    }
+  }
+}

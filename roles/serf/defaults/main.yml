@@ -1,0 +1,18 @@
+---
+serf_version: "0.7.0"
+serf_download_url: "https://releases.hashicorp.com/serf"
+serf_download_dir: "/usr/local/src"
+serf_install_dir: "/usr/local/bin"
+serf_conf_dir: "/etc/serf"
+
+# serf.json
+serf_discover: "serf"
+serf_log_level: "info"
+
+# handler.sh
+serf_handler_logfile: "/tmp/serf.log"
+serf_handler_member_join_job: "LOG \" event: ${SERF_EVENT}.\""
+serf_handler_member_leave_job: "LOG \" event: ${SERF_EVENT}.\""
+serf_handler_member_failed_job: "LOG \" event: ${SERF_EVENT}.\""
+serf_handler_member_update_job: "LOG \" event: ${SERF_EVENT}.\""
+serf_handler_member_reap_job: "LOG \" event: ${SERF_EVENT}.\""

@@ -1,0 +1,29 @@
+---
+- name: add repository 'td'
+  copy: src=yum.repos.d/td.repo dest=/etc/yum.repos.d/td.repo owner=root group=root mode=0644
+  register: add_td_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_td_repo.changed
+
+- name: install td-agent
+  yum: name=td-agent state=present
+
+- name: install td-agent plugins
+  gem: name=fluent-plugin-{{ item.plugin }} executable=td-agent-gem state=present user_install=no
+  with_items: "{{ td_agent_plugins }}"
+
+- name: create td-agent config dir
+  file: path={{ td_agent_conf_dir }} state=directory owner=root group=root mode=0755
+
+- name: add td-agent.conf
+  copy: src=td-agent/td-agent.conf dest=/etc/td-agent/td-agent.conf owner=root group=root mode=0644
+
+- name: add config file
+  template: src=td-agent/conf.d/{{ item }}.j2 dest=/etc/td-agent/conf.d/{{ item }} owner=root group=root mode=0644
+  with_items: "{{ td_agent_configs }}"
+  notify: restart td-agent
+
+- name: update logrotate.d/td-agent
+  template: src=logrotate.d/td-agent.j2 dest=/etc/logrotate.d/td-agent owner=root group=root mode=0644

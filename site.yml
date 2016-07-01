@@ -1,0 +1,5 @@
+---
+- hosts: api
+  become: yes
+  role:
+    - jdk

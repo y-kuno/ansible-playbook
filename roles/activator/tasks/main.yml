@@ -1,0 +1,13 @@
+---
+- name: create activator dir
+  file: path={{ activator_install_dir }} state=directory owner=root group=root mode=755
+
+- name: download activator
+  command: wget -P {{ activator_install_dir }} "{{ activator_download_url }}/{{ activator_version }}/typesafe-activator-{{ activator_version }}.zip"
+           creates={{ activator_install_dir }}/typesafe-activator-{{ activator_version }}.zip
+  register: download_activator
+
+- name: extraction activator
+  unarchive: src={{ activator_install_dir }}/typesafe-activator-{{ activator_version }}.zip
+             dest={{ activator_install_dir }} copy=no
+  when: download_activator.changed

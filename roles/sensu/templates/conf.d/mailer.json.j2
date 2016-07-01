@@ -1,0 +1,11 @@
+{
+  "alert-mail": {
+    "admin_gui": "{{ sensu_mailer_admin_gui }}"
+    "mail_from": "{{ sensu_mailer_mail_from }}",
+    "mail_to": "{{ sensu_mailer_mail_to }}",
+    "reply_to": "{{ sensu_mailer_reply_to }}",
+    "template": "/etc/sensu/handlers/mail-template.erb",
+    "smtp_address": "{{ sensu_mailer_smtp_address }}",
+    "smtp_port": {{ sensu_mailer_smtp_port }}
+  }
+}

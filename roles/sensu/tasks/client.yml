@@ -1,0 +1,8 @@
+---
+- name: add client.json
+  template: src=conf.d/client.json.j2 dest=/etc/sensu/conf.d/client.json
+            owner={ sensu_user }} group={{ sensu_group }} mode=0644
+  notify: restart sensu client
+
+- name: start on boot sensu-client
+  service: name=sensu-client enabled=yes

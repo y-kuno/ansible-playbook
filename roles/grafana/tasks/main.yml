@@ -1,0 +1,12 @@
+---
+- name: install grafana
+  yum: name=https://grafanarel.s3.amazonaws.com/builds/grafana-{{ grafana_version }}.x86_64.rpm state=present
+
+- name: update grafana configs
+  template: src={{ item }}.j2 dest=/etc/grafana/{{ item }} owner={{ grafana_user }} group={{ grafana_group }} mode=0644
+  with_items:
+    - grafana.ini
+  notify: restart grafana-server
+
+- name: start on boot grafana-server
+  service: name=grafana-server enabled=yes

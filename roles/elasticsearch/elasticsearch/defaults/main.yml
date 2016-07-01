@@ -1,0 +1,41 @@
+---
+elasticsearch_user: "elasticsearch"
+elasticsearch_group: "elasticsearch"
+elasticsearch_home: "/usr/share/elasticsearch"
+elasticsearch_conf_dir: "/etc/elasticsearch"
+elasticsearch_template_dir: "{{ elasticsearch_conf_dir }}/templates"
+elasticsearch_data_dir: "/var/lib/elasticsearch"
+elasticsearch_log_dir: "/var/log/elasticsearch"
+elasticsearch_pid_dir: "/var/run/elasticsearch"
+elasticsearch_plugins:
+  - "elasticsearch-kopf"
+#elasticsearch_templates:
+
+# sysconfig/elasticsearch
+elasticsearch_heap_size: "{{ (ansible_memtotal_mb * 0.5) | round | int }}m"
+elasticsearch_restart_on_upgrade: "false"
+elasticsearch_startup_sleep_time: 5
+elasticsearch_max_open_files: 65535
+elasticsearch_max_map_count: 262144
+
+# elasticsearch.yml
+## Cluster
+elasticsearch_cluster_name: "elasticsearch"
+## Node
+elasticsearch_node_name: "{{ ansible_fqdn }}"
+## Memory
+elasticsearch_bootstrap_mlockall: "true"
+## Network
+elasticsearch_network_host: "0.0.0.0"
+elasticsearch_http_port: 9200
+## Discovery
+elasticsearch_discovery_zen_ping_unicast_hosts: "[\"127.0.0.1\", \"[::1]\"]"
+elasticsearch_discovery_zen_minimum_master_nodes: 1
+## Various
+elasticsearch_node_max_local_storage_nodes: 1
+## Index
+elasticsearch_index_number_of_shards: 5
+elasticsearch_index_number_of_replicas: 1
+
+# path.json
+elasticsearch_path_template: "status_monitor-*"

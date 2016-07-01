@@ -1,0 +1,50 @@
+---
+- name: install dependencies packages
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - gcc-c++
+    - libxslt-devel
+    - libxml2-devel
+    - libxml2-static
+    - patch
+
+- name: add repository 'sensu'
+  copy: src=yum.repos.d/sensu.repo dest=/etc/yum.repos.d/sensu.repo owner=root group=root mode=0644
+  register: add_sensu_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_sensu_repo.changed
+
+- name: install sensu
+  yum: name=sensu state=present
+
+- name: set which ruby
+  lineinfile: dest=/etc/default/sensu regexp=^EMBEDDED_RUBY= line=EMBEDDED_RUBY={{ sensu_embedded_ruby }}
+
+- name: install sensu gems
+  gem: name={{ item }} executable=/opt/sensu/embedded/bin/gem state=present user_install=no
+  with_items: "{{ sensu_gems }}"
+
+- name: install sensu plugins
+  gem: name={{ item }} executable=/opt/sensu/embedded/bin/gem state=present user_install=no
+  with_items: "{{ sensu_plugins }}"
+
+- name: create ssl dir
+  file: path={{ sensu_ssl_dir }} state=directory owner={{ sensu_user }} group={{ sensu_group }} mode=0750
+
+- name: add ssl pem file
+  copy: src=sensu/ssl/{{ item }} dest={{ sensu_ssl_dir }}/{{ item }} owner={{ sensu_user }} group={{ sensu_group }} mode=0640
+  with_items:
+    - "{{ sensu_cert }}"
+    - "{{ sensu_key }}"
+
+- name: add config.json
+  template: src=config.json.j2 dest=/etc/sensu/config.json {{ sensu_user }} group={{ sensu_group }} mode=0644
+
+- include: client.yml
+  when: sensu_role == "client"
+
+- include: server.yml
+  when: sensu_role == "server"

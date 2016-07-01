@@ -1,0 +1,22 @@
+---
+- name: download serf
+  get_url: url="{{ serf_download_url }}/{{ serf_version }}/serf_{{ serf_version }}_linux_amd64.zip"
+           dest={{ serf_download_dir }}/serf_{{ serf_version }}_linux_amd64.zip
+  register: download_serf
+
+- name: extraction serf
+  unarchive: src={{ serf_download_dir }}/serf_{{ serf_version }}_linux_amd64.zip
+             dest={{ serf_install_dir }} copy=no
+  when: download_serf.changed
+
+- name: create conf dir
+  file: path={{ serf_conf_dir }} state=directory owner=root group=root mode=0755
+
+- name: add init script
+  template: src=init.d/serf.j2 dest=/etc/init.d/serf owner=root group=root mode=0755
+
+- name: add config file
+  template: src=serf/serf.json.j2 dest={{ serf_conf_dir }}/serf.json owner=root group=root mode=0644
+
+- name: add event handler script
+  template: src=serf/handler.sh.j2 dest={{ serf_conf_dir }}/handler.sh owner=root group=root mode=0755

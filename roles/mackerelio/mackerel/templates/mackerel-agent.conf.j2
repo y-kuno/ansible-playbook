@@ -1,0 +1,35 @@
+apikey = "{{ mackerel_agent_apikey }}"
+pidfile = "{{ mackerel_agent_pidfile }}"
+root = "{{ mackerel_agent_root }}"
+verbose = {{ mackerel_agent_verbose }}
+{% if mackerel_agent_roles is defined %}
+roles = [ "{{ mackerel_agent_roles | join(", ") }}" ]
+{% endif %}
+
+[host_status]
+on_start = "{{ mackerel_agent_host_status_start }}"
+on_stop = "{{ mackerel_agent_host_status_stop }}"
+
+{% if mackerel_agent_plugins is defined %}
+{% for key, command in mackerel_agent_plugins.items() %}
+[plugin.metrics.{{ key }}]
+command = "{{ command }}"
+{% endfor %}
+{% endif %}
+
+{% if mackerel_check_plugins is defined %}
+{% for plugin in mackerel_check_plugins %}
+[plugin.checks.{{ plugin.key }}]
+command = "{{ plugin.command }}"
+{% if plugin.interval is defined %}
+notification_interval = {{ plugin.interval }}
+{% endif %}
+{% if plugin.attempts is defined %}
+max_check_attempts = {{ plugin.attempts }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if mackerel_agent_include is defined %}
+include = "{{ mackerel_agent_include }}"
+{% endif %}

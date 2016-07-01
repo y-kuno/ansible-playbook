@@ -1,0 +1,14 @@
+---
+- name: import mackerel GPG key
+  rpm_key: key=https://mackerel.io/assets/files/GPG-KEY-mackerel
+
+- name: add repository 'mackerel'
+  copy: src=yum.repos.d/mackerel.repo dest=/etc/yum.repos.d/mackerel.repo owner=root group=root mode=0644
+  register: add_mackerel_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_mackerel_repo.changed
+
+ -name: install mkr
+  yum: name=mkr state=latest

@@ -1,0 +1,18 @@
+---
+uchiwa_user: "uchiwa"
+uchiwa_group: "uchiwa"
+
+# uchiwa.json
+uchiwa_host: "0.0.0.0"
+uchiwa_port: 3000
+uchiwa_user: ""
+uchiwa_pass: ""
+uchiwa_refresh: 10
+uchiwa_sensu_name: "sensu"
+uchiwa_sensu_host: "127.0.0.1"
+uchiwa_sensu_ssl: false
+uchiwa_sensu_port: 4567
+uchiwa_sensu_user: "sensu"
+uchiwa_sensu_pass: "sensu"
+uchiwa_sensu_path: ""
+uchiwa_sensu_timeout: 5

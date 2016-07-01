@@ -1,0 +1,23 @@
+---
+- name: import elasticsearch GPG key
+  rpm_key: key=https://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: add repository 'kibana'
+  copy: src=kibana.repo dest=/etc/yum.repos.d/kibana.repo owner=root group=root mode=0644
+  register: add_kibana_repo
+
+- name: clean yum
+  command: yum clean all
+  when: add_kibana_repo.changed
+
+- name: install kibana
+  yum: name=kibana state=present
+  register: install_kibana
+
+- name: install monitor kibana plugins
+  command: bin/kibana plugin --install elasticsearch/marvel/latest chdir={{ kibana_home }}
+  when: install_kibana.changed
+
+- name: update kibana config
+  template: src=kibana.yml.j2 dest={{ kibana_conf_dir }}/kibana.yml owner=root group=root mode=0644
+  notify: restart kibana

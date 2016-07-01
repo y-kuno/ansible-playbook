@@ -1,0 +1,7 @@
+<%= output %>
+Host: <%= @event["client"]["name"] %>.amb-labo.incvb.io
+Timestamp: <%= Time.at(@event["check"]["issued"]) %>
+Check Name:  <%= @event["check"]["name"] %>
+Command:  <%= command %>
+Status:  <%= status_to_string %>
+Occurrences:  <%= @event["occurrences"] %>

@@ -1,0 +1,9 @@
+---
+curator_host: "127.0.0.1"
+
+# close job
+curator_close_older_than: 30
+curator_close_time_unit: "days"
+curator_close_timestring: "%Y.%m.%d"
+curator_close_cron_minute: 0
+curator_close_cron_hour: 4

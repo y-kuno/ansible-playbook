@@ -1,0 +1,13 @@
+---
+- include: debian.yml
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- include: rhel.yml
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "Red Hat Enterprise Linux" or ansible_pkg_mgr == "yum") and ansible_distribution != "Amazon"
+
+- name: create mackerel-agent config dir
+  file: path={{ mackerel_agent_conf_dir }} state=directory owner=root group=root mode=0755
+
+- name: update config
+  template: src=mackerel-agent.conf.j2 dest=/etc/mackerel-agent/mackerel-agent.conf
+  notify: reloaded mackerel-agent

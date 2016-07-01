@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# SERF_EVENT is the event type that is occurring. This will be one of member-join, member-leave, member-failed, member-update, member-reap, user, or query.
+# SERF_SELF_NAME is the name of the node that is executing the event handler.
+# SERF_SELF_ROLE is the role of the node that is executing the event handler.
+# SERF_TAG_${TAG} is set for each tag the agent has. The tag name is upper-cased.
+# SERF_USER_EVENT is the name of the user event if SERF_EVENT is "user".
+# SERF_USER_LTIME is the LamportTime of the user event if SERF_EVENT is "user".
+# SERF_QUERY_NAME is the name of the query if SERF_EVENT is "query".
+# SERF_QUERY_LTIME is the LamportTime of the query if SERF_EVENT is "query".
+
+LOGFILE="{{ serf_handler_logfile }}"
+
+LOG() {
+echo "[`date`] $@" >> $LOGFILE
+}
+
+LOG " serf event handler script started"
+
+case "${SERF_EVENT}" in
+  "member-join")
+    {{ serf_handler_member_join_job }}
+    ;;
+
+  "member-leave")
+    {{ serf_handler_member_leave_job }}
+    ;;
+
+  "member-failed")
+    {{ serf_handler_member_failed_job }}
+    ;;
+
+  "member-update")
+    {{ serf_handler_member_update_job }}
+    ;;
+
+  "member-reap")
+    {{ serf_handler_member_reap_job }}
+    ;;
+
+  *)
+    LOG " event: ${SERF_EVENT}."
+    ;;
+
+esac
+
+LOG " serf event handler script end"
