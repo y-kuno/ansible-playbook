@@ -1,0 +1,47 @@
+---
+- name: install "Development Tools" package group
+  yum: name="@Development Tools" state=installed
+
+- name: install python build package
+  yum: name={{ item }} state=installed
+  with_items:
+    - zlib-devel
+    - bzip2-devel
+    - openssl-devel
+    - ncurses-devel
+    - sqlite-devel
+
+- name: download python
+  command: wget -P {{ python_download_dir }} "{{ python_download_url }}/{{ python_version.major }}.{{ python_version.minor }}.{{ python_version.patchlevel }}/{{ python_package }}.tgz"
+           creates={{ python_download_dir }}/{{ python_package }}.tgz
+
+- name: extraction python
+  unarchive: src={{ python_download_dir }}/{{ python_package }}.tgz
+             dest={{ python_download_dir }} copy=no
+             creates={{ python_download_dir }}/{{ python_package }}
+
+- name: compile & install python
+  command: >
+           {{ item }}
+           chdir={{ python_download_dir }}/{{ python_package }}
+           creates=/usr/local/bin/python{{ python_version.major }}.{{ python_version.minor }}
+  with_items:
+    - "./configure"
+    - make
+    - make altinstall
+
+- name: create symbolic link python
+  file: path=/usr/bin/python{{ python_version.major }}.{{ python_version.minor }}
+        src=/usr/local/bin/python{{ python_version.major }}.{{ python_version.minor }}
+        state=link owner=root group=root
+
+- name: download pip
+  command: wget -P {{ python_download_dir }} {{ python_pip_download_url }}
+           creates={{ python_download_dir }}/get-pip.py
+
+- name: install pip
+  command: python{{ python_version.major }}.{{ python_version.minor }} {{ python_download_dir }}/get-pip.py
+           creates=/usr/local/bin/pip
+
+- name: create symbolic link pip
+  file: path=/usr/bin/pip src=/usr/local/bin/pip state=link owner=root group=root

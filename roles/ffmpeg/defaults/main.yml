@@ -1,0 +1,59 @@
+---
+ffmpeg_version: "3.2"
+ffmpeg_download_url: "http://ffmpeg.org/releases"
+ffmpeg_prefix_dir: "/usr/local/ffmpeg_build"
+ffmpeg_src_dir: "/usr/local/src/ffmpeg_sources"
+ffmpeg_bin_dir: "/usr/local/bin"
+ffmpeg_enable_options:
+  - "--enable-gpl"
+  - "--enable-nonfree"
+  - "--enable-libfreetype"
+  - "--enable-libx264"
+  - "--enable-libx265"
+  - "--enable-libfdk-aac"
+  - "--enable-libmp3lame"
+  - "--enable-libopus"
+  - "--enable-libvorbis"
+  - "--enable-libtheora"
+  - "--enable-libvpx"
+
+# yasm
+ffmpeg_yasm_version: "1.3.0"
+ffmpeg_yasm_download_url: "http://www.tortall.net/projects/yasm/releases"
+
+# libx264
+ffmpeg_libx264_version: "snapshot-20160815-2245"
+ffmpeg_libx264_download_url: "http://ftp.videolan.org/pub/videolan/x264/snapshots"
+
+# libx265
+ffmpeg_libx265_version: "2.1"
+ffmpeg_libx265_download_url: "http://ftp.videolan.org/pub/videolan"
+
+# libfdk-aac
+ffmpeg_libfdk_aac_version: "0.1.4"
+ffmpeg_libfdk_aac_download_url: "http://downloads.sourceforge.net/opencore-amr"
+
+# libmp3lame
+ffmpeg_libmp3lame_version: { major: 3, minor: 99, patchlevel: 5 }
+ffmpeg_libmp3lame_package_version: "{{ ffmpeg_libmp3lame_version.major }}.{{ ffmpeg_libmp3lame_version.minor }}.{{ ffmpeg_libmp3lame_version.patchlevel }}"
+ffmpeg_libmp3lame_download_url: "http://downloads.sourceforge.net/project/lame/lame/{{ ffmpeg_libmp3lame_version.major }}.{{ ffmpeg_libmp3lame_version.minor }}"
+
+# libopus
+ffmpeg_libopus_version: "1.1.3"
+ffmpeg_libopus_download_url: "http://downloads.xiph.org/releases/opus"
+
+# libogg
+ffmpeg_libogg_version: "1.3.2"
+ffmpeg_libogg_download_url: "http://downloads.xiph.org/releases/ogg"
+
+# libvorbis
+ffmpeg_libvorbis_version: "1.3.4"
+ffmpeg_libvorbis_download_url: "http://downloads.xiph.org/releases/vorbis"
+
+# libtheora
+ffmpeg_libtheora_version: "1.1.1"
+ffmpeg_libtheora_download_url: "http://downloads.xiph.org/releases/theora"
+
+# libvpx
+ffmpeg_libvpx_version: "1.6.0"
+ffmpeg_libvpx_download_url: "https://github.com/webmproject/libvpx/archive"

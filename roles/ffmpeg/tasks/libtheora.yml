@@ -1,0 +1,20 @@
+---
+- name: download libtheora
+  get_url: url="{{ ffmpeg_libtheora_download_url }}/libtheora-{{ ffmpeg_libtheora_version }}.tar.bz2"
+           dest={{ ffmpeg_src_dir }}/libtheora-{{ ffmpeg_libtheora_version }}.tar.bz2
+
+- name: extraction libtheora
+  unarchive: src={{ ffmpeg_src_dir }}/libtheora-{{ ffmpeg_libtheora_version }}.tar.bz2
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/libtheora-{{ ffmpeg_libtheora_version }}
+
+- name: compile & install libtheora
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/libtheora-{{ ffmpeg_libtheora_version }}
+           creates={{ ffmpeg_prefix_dir }}/include/theora
+  with_items:
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --disable-shared'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make clean"

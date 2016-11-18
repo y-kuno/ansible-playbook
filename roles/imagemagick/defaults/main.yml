@@ -1,0 +1,5 @@
+---
+imagemagick_version: "7.0.3-6"
+imagemagick_download_url: "download_url"
+imagemagick_download_dir: "/usr/local/src"
+imagemagick_install_dir: "/usr/local/bin"

@@ -1,0 +1,20 @@
+---
+- name: download libvpx
+  command: wget -P {{ ffmpeg_src_dir }} "{{ ffmpeg_libvpx_download_url }}/v{{ ffmpeg_libvpx_version }}.tar.gz"
+           creates={{ ffmpeg_src_dir }}/v{{ ffmpeg_libvpx_version }}.tar.gz
+
+- name: extraction libvpx
+  unarchive: src={{ ffmpeg_src_dir }}/v{{ ffmpeg_libvpx_version }}.tar.gz
+            dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/libvpx-{{ ffmpeg_libvpx_version }}
+
+- name: compile & install libvpx
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/libvpx-{{ ffmpeg_libvpx_version }}
+           creates={{ ffmpeg_bin_dir }}/include/vpx
+  with_items:
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --disable-examples'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make clean"

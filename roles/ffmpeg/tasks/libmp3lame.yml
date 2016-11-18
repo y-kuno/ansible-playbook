@@ -1,0 +1,20 @@
+---
+- name: download libmp3lame
+  get_url: url="{{ffmpeg_libmp3lame_download_url }}/lame-{{ ffmpeg_libmp3lame_package_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/lame-{{ ffmpeg_libmp3lame_package_version }}.tar.gz
+
+- name: extraction libmp3lame
+  unarchive: src={{ ffmpeg_src_dir }}/lame-{{ ffmpeg_libmp3lame_package_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/lame-{{ ffmpeg_libmp3lame_package_version }}
+
+- name: compile & install libmp3lame
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/lame-{{ ffmpeg_libmp3lame_package_version }}
+           creates={{ ffmpeg_bin_dir }}/lame
+  with_items:
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --bindir="{{ ffmpeg_bin_dir }}" --disable-shared --enable-nasm'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

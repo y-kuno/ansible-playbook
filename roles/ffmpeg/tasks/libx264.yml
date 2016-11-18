@@ -1,0 +1,20 @@
+---
+- name: download libx264
+  get_url: url="{{ ffmpeg_libx264_download_url }}/x264-{{ ffmpeg_libx264_version }}.tar.bz2"
+           dest={{ ffmpeg_src_dir }}/x264-{{ ffmpeg_libx264_version }}.tar.bz2
+
+- name: extraction libx264
+  unarchive: src={{ ffmpeg_src_dir }}/x264-{{ ffmpeg_libx264_version }}.tar.bz2
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/x264-{{ ffmpeg_libx264_version }}
+
+- name: compile & install libx264
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/x264-{{ ffmpeg_libx264_version }}
+           creates={{ ffmpeg_bin_dir }}/x264
+  with_items:
+    - './configure --prefix="{{ ffmpeg_src_dir }}" --bindir="{{ ffmpeg_bin_dir }}" --enable-static'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

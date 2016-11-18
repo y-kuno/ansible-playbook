@@ -1,0 +1,20 @@
+---
+- name: download yasm
+  get_url: url="http://www.tortall.net/projects/yasm/releases/yasm-{{ ffmpeg_yasm_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/yasm-{{ ffmpeg_yasm_version }}.tar.gz
+
+- name: extraction yasm
+  unarchive: src={{ ffmpeg_src_dir }}/yasm-{{ ffmpeg_yasm_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no creates={{ ffmpeg_src_dir }}/yasm-{{ ffmpeg_yasm_version }}
+
+- name: compile & install yasm
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/yasm-{{ ffmpeg_yasm_version }}
+           creates={{ ffmpeg_bin_dir }}/yasm
+  with_items:
+    - "autoreconf -fiv"
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --bindir="{{ ffmpeg_bin_dir }}"'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

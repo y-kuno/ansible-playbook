@@ -1,0 +1,21 @@
+---
+- name: download libfdk-aac
+  get_url: url="{{ ffmpeg_libfdk_aac_download_url }}/fdk-aac-{{ ffmpeg_libfdk_aac_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/fdk-aac-{{ ffmpeg_libfdk_aac_version }}.tar.gz
+
+- name: extraction libfdk-aac
+  unarchive: src={{ ffmpeg_src_dir }}/fdk-aac-{{ ffmpeg_libfdk_aac_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/fdk-aac-{{ ffmpeg_libfdk_aac_version }}
+
+- name: compile & install libfdk-aac
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/fdk-aac-{{ ffmpeg_libfdk_aac_version }}
+           creates={{ ffmpeg_prefix_dir }}/include/fdk-aac
+  with_items:
+    - "autoreconf -fiv"
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --disable-shared'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

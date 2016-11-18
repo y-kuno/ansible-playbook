@@ -1,0 +1,20 @@
+---
+- name: download libvorbis
+  get_url: url="{{ ffmpeg_libvorbis_download_url }}/libvorbis-{{ ffmpeg_libvorbis_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/libvorbis-{{ ffmpeg_libvorbis_version }}.tar.gz
+
+- name: extraction libvorbis
+  unarchive: src={{ ffmpeg_src_dir }}/libvorbis-{{ ffmpeg_libvorbis_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/libvorbis-{{ ffmpeg_libvorbis_version }}
+
+- name: compile & install libvorbis
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/libvorbis-{{ ffmpeg_libvorbis_version }}
+           creates={{ ffmpeg_prefix_dir }}/include/vorbis
+  with_items:
+    - 'LDFLAGS="-L{{ ffmpeg_prefix_dir }}/lib" CPPFLAGS="-I{{ ffmpeg_prefix_dir }}/include" ./configure --prefix="{{ ffmpeg_prefix_dir }}" --with-ogg="{{ ffmpeg_prefix_dir }}" --disable-shared'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

@@ -1,0 +1,7 @@
+---
+python_version: { major: 2, minor: 7, patchlevel: 12 }
+python_download_url: "https://www.python.org/ftp/python/"
+python_download_dir: "/usr/local/src"
+python_package: "Python-{{ python_version.major }}.{{ python_version.minor }}.{{ python_version.patchlevel }}"
+python_install_dir: "/usr/local/bin/python"
+python_pip_download_url: "https://bootstrap.pypa.io/get-pip.py"

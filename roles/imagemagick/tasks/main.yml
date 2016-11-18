@@ -1,0 +1,20 @@
+---
+- name: download ImageMagick
+  get_url: url="{{ imagemagick_download_url }}/ImageMagick-{{ imagemagick_version }}.tar.gz"
+           dest={{ imagemagick_download_dir }}/ImageMagick-{{ imagemagick_version }}.tar.gz
+
+- name: extraction ImageMagick
+  unarchive: src={{ imagemagick_download_dir }}/ImageMagick-{{ imagemagick_version }}.tar.gz
+             dest={{ imagemagick_download_dir }} copy=no
+             creates={{ imagemagick_download_dir }}/ImageMagick-{{ imagemagick_version }}
+
+- name: compile & install ImageMagick
+  command: >
+           {{ item }}
+           chdir={{ imagemagick_download_dir }}/ImageMagick-{{ imagemagick_version }}
+           creates={{ imagemagick_install_dir }}/magick
+  with_items:
+    - "./configure"
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

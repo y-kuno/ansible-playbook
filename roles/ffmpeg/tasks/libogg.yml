@@ -1,0 +1,20 @@
+---
+- name: download libogg
+  get_url: url="{{ ffmpeg_libogg_download_url }}/libogg-{{ ffmpeg_libogg_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/libogg-{{ ffmpeg_libogg_version }}.tar.gz
+
+- name: extraction libogg
+  unarchive: src={{ ffmpeg_src_dir }}/libogg-{{ ffmpeg_libogg_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/libogg-{{ ffmpeg_libogg_version }}
+
+- name: compile & install libogg
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/libogg-{{ ffmpeg_libogg_version }}
+           creates={{ ffmpeg_prefix_dir }}/include/ogg
+  with_items:
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --disable-shared'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

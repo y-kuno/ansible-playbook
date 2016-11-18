@@ -1,0 +1,19 @@
+---
+- name: download autoconf
+  get_url: url="{{ autoconf_download_url }}/autoconf-{{ autoconf_version }}.tar.gz"
+           dest={{ autoconf_download_dir }}/autoconf-{{ autoconf_version }}.tar.gz
+
+- name: extraction autoconf
+  unarchive: src={{ autoconf_download_dir }}/autoconf-{{ autoconf_version }}.tar.gz
+             dest={{ autoconf_download_dir }} copy=no creates={{ autoconf_download_dir }}/autoconf-2.69
+
+- name: compile & install autoconf
+  command: >
+           {{ item }}
+           chdir={{ autoconf_download_dir }}/autoconf-{{ autoconf_version }}
+           creates={{ autoconf_install_dir }}/autoconf
+  with_items:
+    - "./configure"
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"

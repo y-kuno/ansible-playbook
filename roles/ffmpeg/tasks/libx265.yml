@@ -1,0 +1,20 @@
+---
+- name: download libx265
+  get_url: url="{{ ffmpeg_libx265_download_url }}/x265/x265_{{ ffmpeg_libx265_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/x265_{{ ffmpeg_libx265_version }}.tar.gz
+
+- name: extraction libx265
+  unarchive: src={{ ffmpeg_src_dir }}/x265_{{ ffmpeg_libx265_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/x265_{{ ffmpeg_libx265_version }}
+
+- name: compile & install libx265
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/x265_{{ ffmpeg_libx265_version }}/build/linux
+           creates={{ ffmpeg_bin_dir }}/x265
+  with_items:
+    - 'cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="/usr/local" -DENABLE_SHARED:bool=off ../../source'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make clean"

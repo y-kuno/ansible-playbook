@@ -1,0 +1,20 @@
+---
+- name: download libopus
+  get_url: url="{{ ffmpeg_libopus_download_url }}/opus-{{ ffmpeg_libopus_version }}.tar.gz"
+           dest={{ ffmpeg_src_dir }}/opus-{{ ffmpeg_libopus_version }}.tar.gz
+
+- name: extraction libopus
+  unarchive: src={{ ffmpeg_src_dir }}/opus-{{ ffmpeg_libopus_version }}.tar.gz
+             dest={{ ffmpeg_src_dir }} copy=no
+             creates={{ ffmpeg_src_dir }}/opus-{{ ffmpeg_libopus_version }}
+
+- name: compile & install libopus
+  command: >
+           {{ item }}
+           chdir={{ ffmpeg_src_dir }}/opus-{{ ffmpeg_libopus_version }}
+           creates={{ ffmpeg_prefix_dir }}/include/opus
+  with_items:
+    - './configure --prefix="{{ ffmpeg_prefix_dir }}" --disable-shared'
+    - "make -j{{ ansible_processor_count }}"
+    - "make install"
+    - "make distclean"
