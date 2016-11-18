@@ -1,0 +1,5 @@
+---
+openstack_client_packages:
+  - python-openstackclient
+  - python-novaclient
+  - python-neutronclient

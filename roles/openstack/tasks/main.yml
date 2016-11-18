@@ -1,0 +1,4 @@
+---
+- name: install openstack client packages
+  pip: name={{ item }} state=present
+  with_items: "{{ openstack_client_packages }}"
