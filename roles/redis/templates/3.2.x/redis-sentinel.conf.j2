@@ -1,14 +1,27 @@
 # Redis sentinel.conf
 
+# *** IMPORTANT ***
+#
+# By default Sentinel will not be reachable from interfaces different than
+# localhost, either use the 'bind' directive to bind to a list of network
+# interfaces, or disable protected mode with "protected-mode no" by
+# adding it to this configuration file.
+#
+# Before doing that MAKE SURE the instance is protected from the outside
+# world via firewalling or other means.
+#
+# For example you may use one of the following:
+#
+# bind 127.0.0.1 192.168.1.1
+#
+# protected-mode no
+bind {{ redis_sentinel_bind }}
+
+protected-mode {{ redis_sentinel_protected_mode }}
+
 # port <sentinel-port>
 # The port that this sentinel instance will run on
 port {{ redis_sentinel_port }}
-
-# By default Redis listens for connections from all the network interfaces
-# available on the server. It is possible to listen to just one or multiple
-# interfaces using the "bind" configuration directive, followed by one or
-# more IP addresses.
-bind {{ redis_sentinel_bind }}
 
 # By default Redis does not run as a daemon. Use 'yes' if you need it.
 # Note that Redis will write a pid file in /var/run/redis.pid when daemonized.
@@ -31,6 +44,35 @@ loglevel {{ redis_sentinel_loglevel }}
 # output for logging but daemonize, logs will be sent to /dev/null
 logfile {{ redis_sentinel_logfile }}
 
+# sentinel announce-ip <ip>
+# sentinel announce-port <port>
+#
+# The above two configuration directives are useful in environments where,
+# because of NAT, Sentinel is reachable from outside via a non-local address.
+#
+# When announce-ip is provided, the Sentinel will claim the specified IP address
+# in HELLO messages used to gossip its presence, instead of auto-detecting the
+# local address as it usually does.
+#
+# Similarly when announce-port is provided and is valid and non-zero, Sentinel
+# will announce the specified TCP port.
+#
+# The two options don't need to be used together, if only announce-ip is
+# provided, the Sentinel will announce the specified IP and the server port
+# as specified by the "port" option. If only announce-port is provided, the
+# Sentinel will announce the auto-detected local IP and the specified port.
+#
+# Example:
+#
+# sentinel announce-ip 1.2.3.4
+
+# dir <working-directory>
+# Every long running process should have a well-defined working directory.
+# For Redis Sentinel to chdir to /tmp at startup is the simplest thing
+# for the process to don't interfere with administrative tasks such as
+# unmounting filesystems.
+dir {{ redis_sentinel_dir }}
+
 # sentinel monitor <master-name> <ip> <redis-port> <quorum>
 #
 # Tells Sentinel to monitor this master, and to consider it in O_DOWN
@@ -39,6 +81,12 @@ logfile {{ redis_sentinel_logfile }}
 # Note that whatever is the ODOWN quorum, a Sentinel will require to
 # be elected by the majority of the known Sentinels in order to
 # start a failover, so no failover can be performed in minority.
+#
+# Slaves are auto-discovered, so you don't need to specify slaves in
+# any way. Sentinel itself will rewrite this configuration file adding
+# the slaves using additional configuration options.
+# Also note that the configuration file is rewritten when a
+# slave is promoted to master.
 #
 # Note: master name should not include special characters or spaces.
 # The valid charset is A-z 0-9 and the three characters ".-_".

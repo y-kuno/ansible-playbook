@@ -1,8 +1,13 @@
 ---
 redis_user: "redis"
+redis_group: "redis"
 redis_home: "/var/lib/redis"
-redis_version: "3.0.7"
+redis_version: { major: 3, minor: 0, patchlevel: 7 }
+redis_download_url: "http://download.redis.io/releases"
 redis_download_dir: "/usr/local/src"
+redis_package: "redis-{{ redis_version.major }}.{{ redis_version.minor }}.{{ redis_version.patchlevel }}"
+redis_log_dir: "/var/log/redis"
+redis_pidfile_dir: "/var/run/redis"
 redis_role: "server" # server or sentinel
 redis_ulimit: 65536
 redis_sentinel_use: false
@@ -11,17 +16,21 @@ redis_sentinel_public_key: "id_rsa.pub"
 
 # redis.conf
 ## INCLUDES
-#redis_include: /path/to/local.conf
-## GENERAL
-redis_daemonize: "yes"
-redis_pidfile: "/var/run/redis/redis.pid"
+#redis_include:
+#  - /path/to/local.conf
+## NETWORK
+redis_bind: "0.0.0.0"
+redis_protected_mode: "no"
 redis_port: 6379
 redis_backlog: 511
-redis_bind: "0.0.0.0"
 redis_timeout: 0
 redis_tcp_keepalive: 0
+## GENERAL
+redis_daemonize: "yes"
+redis_supervised: "no"
+redis_pidfile: "{{ redis_pidfile_dir }}/redis.pid"
 redis_loglevel: "notice"
-redis_logfile: "/var/log/redis/redis.log"
+redis_logfile: "{{ redis_log_dir }}/redis.log"
 redis_database: 16
 ## SNAPSHOTTING
 redis_save:
@@ -40,6 +49,8 @@ redis_master_port: 6379
 #redis_master_auth:
 redis_slave_serve_stale_data: "yes"
 redis_slave_read_only: "yes"
+redis_repl_diskless_sync: "no"
+redis_repl_diskless_sync_delay: 5
 redis_repl_ping_slave_period: 10
 redis_repl_timeout: 60
 redis_repl_disable_tcp_nodelay: "no"
@@ -58,11 +69,14 @@ redis_appendfsync: "everysec"
 redis_no_appendfsync_on_rewrite: "no"
 redis_auto_aof_rewrite_percentage: 100
 redis_auto_aof_rewrite_min_size: "64mb"
+redis_aof_load_truncate: "yes"
 ## LUA SCRIPTING
 redis_lua_time_limit: 5000
 ## SLOW LOG
 redis_slowlog_log_slower_than: 10000
 redis_slowlog_max_len: 1024
+## LATENCY MONITOR
+redis_latency_monitor_threshold: 1000
 ## Event notification
 redis_notify_keyspace_events: ""
 ## ADVANCED CONFIG
@@ -80,12 +94,14 @@ redis_hz: 10
 redis_aof_rewrite_incremental_fsync: "yes"
 
 # redis-sentinel.conf
-redis_sentinel_port: 26379
 redis_sentinel_bind: "0.0.0.0"
+redis_sentinel_protected_mode: "no"
+redis_sentinel_port: 26379
 redis_sentinel_daemonize: "yes"
-redis_sentinel_pidfile: "/var/run/redis/redis-sentinel.pid"
+redis_sentinel_pidfile: "{{ redis_pidfile_dir }}/redis-sentinel.pid"
 redis_sentinel_loglevel: "notice"
-redis_sentinel_logfile: "/var/log/redis/redis-sentinel.log"
+redis_sentinel_logfile: "{{ redis_log_dir }}/redis-sentinel.log"
+redis_sentinel_dir: "/var/lib/redis"
 redis_sentinel_master_name: "mymaster"
 redis_sentinel_master_ip: "127.0.0.1"
 redis_sentinel_master_port: 6379

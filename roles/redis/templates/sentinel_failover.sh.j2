@@ -3,7 +3,7 @@
 master_vip_device="eth0"
 
 SSH_OPT="-tt -o ConnectionAttempts=1 -o ConnectTimeout=2"
-LOGFILE="/tmp/sentinel_reconfigure.log"
+LOGFILE="{{ redis_log_dir }}/sentinel_reconfigure.log"
 
 
 LOG() {

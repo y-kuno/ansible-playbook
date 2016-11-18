@@ -50,16 +50,6 @@ stop() {
 }
 
 restart() {
-    force_stop
-    start
-}
-
-restart() {
-    stop
-    start
-}
-
-force-reload() {
     stop
     start
 }
@@ -71,11 +61,11 @@ case "$1" in
     stop)
         $1
         ;;
-    restart|force-reload)
+    restart)
         $1
         ;;
     *)
-        echo $"Usage: $0 {start|stop|restart|force-reload}"
+        echo $"Usage: $0 {start|stop|restart}"
         exit 2
 esac
 

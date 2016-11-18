@@ -16,8 +16,8 @@
   when: redis_sentinel_use
 
 - name: update redis.conf
-  template: src=redis.conf.j2 dest=/etc/redis.conf owner=root group=root mode=0644
+  template: src={{ redis_version.major }}.{{ redis_version.minor }}.x/redis.conf.j2 dest=/etc/redis.conf owner=root group=root mode=0644
   notify: restart redis
 
-- name: start on boot redis
-  service: name=redis enabled=yes
+- name: disable transparent huge pages
+  command: echo never > /sys/kernel/mm/transparent_hugepage/enabled
