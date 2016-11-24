@@ -38,9 +38,9 @@ sensu_influxdb_database: "metrics"
 
 # mailer.json
 sensu_mailer_admin_gui: "http://127.0.0.1"
-sensu_mailer_mail_from: "sensu@sensu.amb-labo.incvb.io"
-sensu_mailer_mail_to: "ca-crit@ca-sys.net"
-sensu_mailer_reply_to: "ca-crit@ca-sys.net"
+sensu_mailer_mail_from: "sensu@sensu.io"
+sensu_mailer_mail_to: "crit@sensu.io"
+sensu_mailer_reply_to: "crit@sensu.io"
 sensu_mailer_smtp_address: "localhost"
 sensu_mailer_smtp_port: 25
 
