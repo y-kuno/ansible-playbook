@@ -1,6 +1,7 @@
 ---
 mysql_user: "mysql"
 mysql_group: "mysql"
+mysql_version: "5.7.11-1.el6"
 mysql_repo_url: "http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm"
 mysql_log_dir: "/var/log/mysql"
 mysql_repl_use: false
@@ -8,6 +9,9 @@ mysql_repl_user: repl
 mysql_repl_password: repl
 mysql_repl_role: "master" # master or slave
 mysql_repl_master_host: "127.0.0.1"
+mysql_monitor_use: false
+mysql_monitor_user: "monitor"
+mysql_monitor_password: "monitor"
 
 # my.cnf
 ## General

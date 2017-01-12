@@ -1,0 +1,17 @@
+{{ mysql_log_dir }}/*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    dateext
+    notifempty
+    create 644 {{ mysql_user }} {{ mysql_group }}
+    postrotate
+    # just if mysqld is really running
+    if test -x /usr/bin/mysqladmin && \
+       /usr/bin/mysqladmin ping &>/dev/null
+    then
+       /usr/bin/mysqladmin flush-logs
+    fi
+    endscript
+}

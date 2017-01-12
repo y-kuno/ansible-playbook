@@ -8,7 +8,7 @@
   when: add_mysql_repo.changed
 
 - name: install mysql-community-server
-  yum: name=mysql-community-server state=installed
+  yum: name=mysql-community-server-{{ mysql_version }} state=installed
   register: mysql_install
 
 - name: install mysql-utilities
@@ -17,12 +17,18 @@
     - mysql-connector-python
     - mysql-utilities
 
+- name: install MySQL-python
+  yum: name=MySQL-python state=installed
+
 - name: create log dir
   file: path={{ mysql_log_dir }} state=directory owner={{ mysql_user }} group={{ mysql_group }} mode=0755
 
 - name: update config
   template: src=my.cnf.j2 dest=/etc/my.cnf owner=root group=root mode=0644
   notify: restart mysqld
+
+- name: update logrotate.d/mysql
+  template: src=logrotate.d/mysql.j2 dest=/etc/logrotate.d/mysql owner=root group=root mode=0644
 
 - name: initialize data dir, no root password is generated
   command: mysqld --initialize-insecure --user=mysql
@@ -31,5 +37,26 @@
 - name: start mysqld
   service: name=mysqld state=started
 
+- name: create mysql databases
+  mysql_db: name={{ item }} state=present
+  with_items: "{{ mysql_create_databases }}"
+  when: mysql_create_databases > 0
+
+- name: create mysql user
+  mysql_user: name={{ item.name }} password={{ item.password }}
+              host={{ item.host }} priv="{{ item.priv }}" state=present
+  with_items: "{{ mysql_create_users }}"
+  when: mysql_create_users > 0
+
+- name: create databases
+  mysql_db: name={{ item }} state=present
+  with_items: "{{ mysql_create_databases }}"
+  when: mysql_create_databases > 0
+
 - include: repl.yml
   when: mysql_repl_use
+
+- name: create monitor user
+  mysql_user: name={{ mysql_monitor_user }} password={{ mysql_monitor_password }}
+              host=% priv="*.*:ALL" state=present
+  when: mysql_monitor_use and not mysql_backup_server
