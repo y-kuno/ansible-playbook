@@ -1,0 +1,22 @@
+---
+zookeeper_user: "zookeeper"
+zookeeper_group: "zookeeper"
+zookeeper_home: "/var/lib/zookeeper"
+zookeeper_version: "3.4.9"
+zookeeper_download_url: "http://ftp.yz.yamagata-u.ac.jp/pub/network/apache/zookeeper"
+zookeeper_download_dir: "/opt"
+zookeeper_log_dir: "/var/log/zookeeper"
+
+# log4j.properties
+zookeeper_root_logger: "INFO, ROLLINGFILE"
+
+# zoo.cfg
+zookeeper_tick_time: 2000
+zookeeper_init_limit: 5
+zookeeper_sync_limit: 2
+zookeeper_data_dir: "{{ zookeeper_home }}"
+zookeeper_client_port: 2181
+#zookeeper_replicated_servers:
+#  - id: 1
+#    host: "localhost"
+#    port: "2888:3888"

@@ -1,0 +1,42 @@
+---
+- name: create zookeeper group
+  group: name={{ zookeeper_group }} system=yes state=present
+
+- name: add zookeeper user
+  user: name={{ zookeeper_user }} comment="Zookeeper" home={{ zookeeper_home }} group={{ zookeeper_group }}
+        shell=/bin/false system=yes state=present
+
+- name: download zookeeper
+  get_url: url="{{ zookeeper_download_url }}/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz"
+           dest={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz
+
+- name: extraction zookeeper
+  unarchive: src={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz
+             dest={{ zookeeper_download_dir }} copy=no
+             creates={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}
+
+- name: chmod zookeeper
+  file: path={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }} state=directory
+        owner={{ zookeeper_user }} group={{ zookeeper_group }} recurse=yes
+
+- name: create log dir
+  file: path={{ zookeeper_log_dir }} state=directory owner={{ zookeeper_user }} group=root mode=0755
+
+- name: update zookeeper config & log4j.properties
+  template: src=conf/{{ item }}.j2 dest={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}/conf/{{ item }}
+            owner={{ zookeeper_user }} group={{ zookeeper_group }} mode=0664
+  with_items:
+    - "log4j.properties"
+    - "zoo.cfg"
+
+- name: add myid file
+  template: src=myid.j2 dest={{ zookeeper_home }}/myid owner={{ zookeeper_user }} group={{ zookeeper_group }} mode=0644
+
+- name: update zookeeper server script
+  template: src=bin/zkServer.sh.j2
+            dest={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}/bin/zkServer.sh
+            owner={{ zookeeper_user }} group={{ zookeeper_group }} mode=0755
+
+- name: create symbolic link zookeeper
+  file: path={{ zookeeper_download_dir }}/zookeeper src={{ zookeeper_download_dir }}/zookeeper-{{ zookeeper_version }}
+        state=link owner=root group=root

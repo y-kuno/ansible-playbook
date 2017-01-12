@@ -1,0 +1,7 @@
+{% if zookeeper_replicated_servers is defined %}
+{% for server in zookeeper_replicated_servers %}
+{% if server.host == ansible_eth0.ipv4.address %}
+{{ server.id }}
+{% endif %}
+{% endfor %}
+{% endif %}
