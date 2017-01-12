@@ -22,4 +22,9 @@
 - name: add cron 'curator close job'
   cron: name="curator close job"
         job="/usr/bin/curator --host {{ curator_host }} close indices --older-than {{ curator_close_older_than }} --time-unit {{ curator_close_time_unit }} --timestring {{ curator_close_timestring }}"
-        minute={{ curator_close_cron_minute }} hour={{ curator_close_cron_hour }} user=root state=present
+        minute={{ curator_close_cron_minute }} hour={{ curator_close_cron_hour }} user=cy_daemon state=present
+
+- name: add cron 'curator delete job'
+  cron: name="curator delete job"
+        job="/usr/bin/curator --host {{ curator_host }} delete indices --older-than {{ curator_delete_older_than }} --time-unit {{ curator_delete_time_unit }} --timestring {{ curator_delete_timestring }}"
+        minute={{ curator_delete_cron_minute }} hour={{ curator_delete_cron_hour }} user=cy_daemon state=present

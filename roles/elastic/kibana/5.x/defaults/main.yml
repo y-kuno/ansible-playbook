@@ -1,0 +1,16 @@
+---
+kibana_version: "5.1.1-1"
+kibana_user: "kibana"
+kibana_home: "/usr/share/kibana"
+kibana_conf_dir: "/etc/kibana"
+kibana_plugin_bin: "{{ kibana_home }}/bin/kibana-plugin"
+
+# kibana.yml
+kibana_server_port: 5601
+kibana_server_host: "0.0.0.0"
+kibana_server_name: "kibana"
+kibana_elasticsearch_url: "http://localhost:9200"
+kibana_elasticsearch_request_timeout: 30000
+kibana_pid_file: "/var/run/kibana.pid"
+kibana_xpack_security_enable: "false"
+kibana_xpack_graph_enable: "false"

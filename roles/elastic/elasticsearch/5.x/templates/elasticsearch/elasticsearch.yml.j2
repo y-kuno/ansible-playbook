@@ -1,0 +1,113 @@
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please see the documentation for further information on configuration options:
+# <https://www.elastic.co/guide/en/elasticsearch/reference/5.0/settings.html>
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: {{ elasticsearch_cluster_name }}
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: {{ elasticsearch_node_name }}
+#
+# Add custom attributes to the node:
+#
+#node.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+#path.data: /path/to/data
+#
+# Path to log files:
+#
+#path.logs: /path/to/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+bootstrap.memory_lock: {{ elasticsearch_bootstrap_memory_lock }}
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+network.host: {{ elasticsearch_network_host }}
+#
+# Set a custom port for HTTP:
+#
+http.port: {{ elasticsearch_http_port }}
+#
+# For more information, see the documentation at:
+# <https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-network.html>
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when new node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.zen.ping.unicast.hosts: {{ elasticsearch_discovery_zen_ping_unicast_hosts }}
+#
+# Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
+#
+discovery.zen.minimum_master_nodes: {{ elasticsearch_discovery_zen_minimum_master_nodes }}
+#
+# For more information, see the documentation at:
+# <https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-discovery-zen.html>
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+#gateway.recover_after_nodes: 3
+#
+# For more information, see the documentation at:
+# <https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-gateway.html>
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Disable starting multiple nodes on a single system:
+#
+node.max_local_storage_nodes: {{ elasticsearch_node_max_local_storage_nodes }}
+#
+# Require explicit names when deleting indices:
+#
+#action.destructive_requires_name: true
+#
+# ---------------------------------- X-Pack ------------------------------------
+#
+# Set to false to disable X-Pack security.
+#
+xpack.security.enabled: {{ elasticsearch_xpack_security_enabled }}
+#
+# Set to false to disable X-Pack monitoring.
+#
+#xpack.monitoring.enabled: true
+#
+#Set to false to disable X-Pack graph.
+#
+xpack.graph.enabled: {{ elasticsearch_xpack_graph_enabled }}
+#
+# Set to false to disable Watcher.
+#
+#xpack.watcher.enabled: true

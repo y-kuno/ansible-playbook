@@ -1,0 +1,21 @@
+---
+- name: import public signing key
+  rpm_key: key=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: add repository 'kibana'
+  copy: src=kibana.repo dest=/etc/yum.repos.d/kibana.repo owner=root group=root mode=0644
+
+- name: install kibana
+  yum: name=kibana-{{ kibana_version }} state=present
+
+- name: install x-pack plugins
+  command: >
+           {{ kibana_plugin_bin }} install x-pack
+           creates={{ kibana_home }}/plugins/x-pack
+
+- name: update kibana config
+  template: src=kibana.yml.j2 dest={{ kibana_conf_dir }}/kibana.yml owner=root group=root mode=0644
+  notify: restart kibana5.x
+
+- name: chenge owner
+  command: chown -R {{kibana_user}}:{{kibana_user}} {{ kibana_home }}/optimize

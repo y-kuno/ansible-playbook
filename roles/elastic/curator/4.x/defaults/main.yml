@@ -1,0 +1,17 @@
+---
+curator_version: "4.2.4-1"
+curator_host: "127.0.0.1"
+
+# close indices job
+curator_close_older_than: 15
+curator_close_time_unit: "days"
+curator_close_timestring: "\\%Y.\\%m.\\%d"
+curator_close_cron_minute: 0
+curator_close_cron_hour: 4
+
+# delete indices job
+curator_delete_older_than: 30
+curator_delete_time_unit: "days"
+curator_delete_timestring: "\\%Y.\\%m.\\%d"
+curator_delete_cron_minute: 5
+curator_delete_cron_hour: 4
